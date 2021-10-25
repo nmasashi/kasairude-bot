@@ -49,32 +49,19 @@ exports.scheduledEventLoggerHandler = async (event, context) => {
     .request(options)
     .then(response => {
       return response.data.list
-        .map(e => {
-          return {
-            weather: e.weather[0].main,
-            // 「適度な雨」だと意味がわからないので「雨」に変換。表現的には正しいはず
-            detail:
-              e.weather[0].description === "適度な雨"
-                ? "雨"
-                : e.weather[0].description,
-            date: e.dt_txt
-          };
-        })
-        .filter(
-          e =>
-            e.weather === "Rain" &&
-            e.date.startsWith(new Date().toFormat("YYYY-MM-DD"))
+        .filter(e => 
+          e.dt_txt.startsWith(new Date().toFormat("YYYY-MM-DD"))
         );
     })
     .then(async datas => {
-      if (datas.length !== 0) {
-        let content = "今日、傘いるで\n\n";
+      if (datas.some(e => e.weather[0].main === 'Rain')) {
+        let content = "今日、傘いるで\n\n" + new Date().getMonth() + "/" + new Date().getDate() + "\n";
         datas.forEach(e => {
-          content += `${new Date(e.date).getHours()}時 ${e.detail}\n`;
+          content += `${("  " + new Date(e.dt_txt).getHours()).slice(-2)}時 ${e.weather[0].description === "適度な雨" ? "雨" : e.weather[0].description}\n`;
         });
         tweetPost(content);
       } else {
-        console.info("hare");
+        console.info("no rain");
       }
     })
     .catch(error => {
