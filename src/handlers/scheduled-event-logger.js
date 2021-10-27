@@ -21,12 +21,8 @@ const getOptions = async () => {
 			lang: "ja",
 		},
 		headers: {
-			"x-rapidapi-key": (
-				await ssm.getParameter({ Name: "X_RAPIDAPI_KEY" }).promise()
-			).Parameter.Value,
-			"x-rapidapi-host": (
-				await ssm.getParameter({ Name: "X_RAPIDAPI_HOST" }).promise()
-			).Parameter.Value,
+			"x-rapidapi-key": (await ssm.getParameter({ Name: "X_RAPIDAPI_KEY" }).promise()).Parameter.Value,
+			"x-rapidapi-host": (await ssm.getParameter({ Name: "X_RAPIDAPI_HOST" }).promise()).Parameter.Value,
 		},
 	};
 };
@@ -34,15 +30,9 @@ const getOptions = async () => {
 const tweetPost = async (content) => {
 	const client = new Twitter({
 		consumer_key: (await ssm.getParameter({ Name: "CONSUMER_KEY" }).promise()).Parameter.Value,
-		consumer_secret: (
-			await ssm.getParameter({ Name: "CONSUMER_SECRET" }).promise()
-		).Parameter.Value,
-		access_token_key: (
-			await ssm.getParameter({ Name: "ACCESS_TOKEN_KEY" }).promise()
-		).Parameter.Value,
-		access_token_secret: (
-			await ssm.getParameter({ Name: "ACCESS_TOKEN_SECRET" }).promise()
-		).Parameter.Value,
+		consumer_secret: (await ssm.getParameter({ Name: "CONSUMER_SECRET" }).promise()).Parameter.Value,
+		access_token_key: (await ssm.getParameter({ Name: "ACCESS_TOKEN_KEY" }).promise()).Parameter.Value,
+		access_token_secret: (await ssm.getParameter({ Name: "ACCESS_TOKEN_SECRET" }).promise()).Parameter.Value,
 	});
 
 	await client.post("statuses/update", { status: content });
@@ -67,9 +57,9 @@ exports.scheduledEventLoggerHandler = async (event, context) => {
 		})
 
 	if (datas.some(e => e.weather[0].main === 'Rain')) {
-		let content =
+			let content =
 			"今日、傘いるで\n\n" +
-			new Date().toFormat("YYYY-MM-DD HH:MI:SS") +
+			new Date().toFormat("MM/DD HH:MI:SS") +
 			"\n";
 		datas.forEach((e) => {
 			// 「適度な雨」だとよくわからないので「雨」に変換
