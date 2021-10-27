@@ -22,9 +22,10 @@ describe('Test for sqs-payload-logger', function () {
       "detail": {}
     }
 
-    await scheduledEventLogger.scheduledEventLoggerHandler(payload, null)
+    const result = await scheduledEventLogger.scheduledEventLoggerHandler(payload, null)
 
     // Verify that console.info has been called with the expected payload
-    expect(console.info).toHaveBeenCalledWith(JSON.stringify(payload))
+    expect(result).toEqual(0);
+    // expect(console.info).toHaveBeenCalledWith(JSON.stringify(payload))
   });
 });
